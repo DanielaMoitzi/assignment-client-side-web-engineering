@@ -6,7 +6,10 @@
  * - Works with positive integers ℤ+!
  * - Throws an error if exponent is invalid
  */
-export function pow() {
+export function pow(x, y) {
+  let arr = new Array(y)
+  let a = arr.fill(x)
+  return a.reduce(function(x, y){return x*y}); 
 }
 
 /*
@@ -16,5 +19,20 @@ export function pow() {
  * - Provides a primer for complex fields
  * - Throws an error if arguments are invalid
  */
-export function sortBy() {
+
+export function sortBy(attr, primer) {
+  return function(a,b) {
+    let y, z
+    if(primer){
+      y = primer(a[attr])
+      z = primer(b[attr])
+    }
+    else {
+      y = a[attr]
+      z = b[attr]
+    }
+    if(y < z) return -1
+    else if(y > z) return 1
+    return 0
+  }
 }
