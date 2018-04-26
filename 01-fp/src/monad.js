@@ -20,4 +20,17 @@
  *   .fadeOut();
  */
 export function d() {
+  const wrapper = function (obj = {}) {
+    wrapper.value = obj
+    return wrapper
+  }
+  wrapper.extend = function(str, fn) {
+    this[str] = function(...args) {
+      fn.apply(this, args)
+      return this
+    }
+    return this
+  }
+  
+  return wrapper
 }

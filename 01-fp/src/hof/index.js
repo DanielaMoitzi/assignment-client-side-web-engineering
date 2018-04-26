@@ -7,9 +7,8 @@
  * - Throws an error if exponent is invalid
  */
 export function pow(x, y) {
-  let arr = new Array(y)
-  let a = arr.fill(x)
-  return a.reduce(function(x, y){return x*y}); 
+  let arr = new Array(y).fill(x)
+  return arr.reduce((product, factor) => product * factor); 
 }
 
 /*

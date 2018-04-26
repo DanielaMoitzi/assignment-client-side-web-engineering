@@ -52,7 +52,7 @@ describe("01-fp", () => {
       curryAdd(1)(2, 3).should.eql(6);
     });
 
-    it.skip("should invoke currified version of mul(...factors): mul(2)(2, 2)(2)(2, 2)", () => {
+    it("should invoke currified version of mul(...factors): mul(2)(2, 2)(2)(2, 2)", () => {
       function mul(...args) {
         const [first, ...rest] = args;
         if (rest.length === 0) {

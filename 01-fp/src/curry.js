@@ -8,32 +8,14 @@
  * - Has auto currying after initial call
  */
 
-
-// export function curry(fn, i = 0, args = []) {
-  
-//   if(fn.length == 0) return fn
-  
-//   if(i === fn.length) return fn(...args)
-
-//   return (x) => {
-//     args.push(x)
-//     return curry(fn, i+1, args)
-//   }
-// }
-
-
-
-
-
-
-export function curry(fn) {
+export function curry(fn, len = fn.length) {
   function f(i, args) {
     return (...x) => {
-      if (i + x.length >= fn.length) {
+      if (i + x.length >= len) {
         return fn(...args, ...x)
       }
       return f(i + x.length, [...args, ...x])
     }
   }
-  return f(0, []);
+  return f(0, [])
 }

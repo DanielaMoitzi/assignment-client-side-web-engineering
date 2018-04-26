@@ -9,4 +9,17 @@
  */
 export const _ = undefined;
 
-export function partial() {}
+export function partial(fn, len = fn.length) {
+  let arr = new Array(len).fill(_)
+  return function f(...args) {
+    args.forEach((arg, idx) => {
+      for(let index = idx; index < arr.length; index ++ ){
+        if(arg && !arr[index]){
+          arr[index] = arg
+          break
+        }
+      }
+    })
+    return !arr.includes(_) ? fn(...arr) : f
+  }
+}
