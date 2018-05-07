@@ -22,10 +22,7 @@ global.document = dom.window.document;
 
 
 export function build(template){
-  
-
   const elementMatch = (str) => {
-    
     const MATCH_ELEMENT = /<([a-z][a-z0-9]*\b[^>]*)>(.*?)<\/\1>/g;
     const MATCH_VARIABLE = /^\{\{(.+)\}\}$/;
     let element
@@ -37,8 +34,11 @@ export function build(template){
         let o = {}
         let tag = element[1]
         o.tag = tag
-        o.dom_element = global.document.createElement(tag)      
+        o.dom_element = global.document.createElement(tag)    
         o.children = elementMatch(element[2])
+        for(let child of o.children){
+          o.dom_element.appendChild(child.dom_element)
+        }
         if(variable){
           o.variable = variable[1]
           o.text = global.document.createTextNode("")
@@ -47,38 +47,26 @@ export function build(template){
         elements.push(o)
       }
     } while (element)
-
     return elements
   }
   
-
-  const update = (data, actual_obj) => {
+  const obj = elementMatch(template)
+  const update = (data, actual_obj = obj) => {
     let key = Object.keys(data)[0]
-    let obj = actual_obj
-    while(actual_obj[0]){
-      if(actual_obj[0].variable == key){
-        actual_obj[0].text.nodeValue = data[key]
+    for(let o of actual_obj){
+      if(o.variable == key){
+        o.text.nodeValue = data[key]
       }
-      actual_obj = actual_obj[0].children
+      if(o.children.length > 0) update(data, o.children)
     }
     return obj
   }
-  
-  
 
-
-  // // let variable = template.toString().match(MATCH_VARIABLE)
-  return function createElement(x) {
-    const obj = elementMatch(template)
-    const updated = update(x, obj)
+  return function createElement(data) {
+    const updated = update(data, obj)
     const v = updated[0].dom_element
-    return { el: v }
+    return { el: v, update}
   }
-
-  
 }
-// const tpl = build("<h1><span><small>{{title}}</small></span></h1>")
-// const title = "Hello, World!";
-// const txt = "blubb blubb blubb"
-// tpl({ title })
+
 
