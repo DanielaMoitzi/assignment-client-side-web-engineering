@@ -1,3 +1,4 @@
+const { JSDOM } = require("jsdom");
 /**
  * Implement a view engine:
  *
@@ -14,60 +15,70 @@
  * el.outerHTML // <h1>Hallo, Welt!</h1>
  */
 
-const MATCH_VARIABLE = /^\{\{(.+)\}\}$/;
 
-function build(template){
+// provide DOM for tests
+const dom = new JSDOM(`<!DOCTYPE html>`);
+global.document = dom.window.document;
+
+
+export function build(template){
   
 
-  elementMatch = (str) => {
-   //console.log("str:")
-    //console.log(str)
+  const elementMatch = (str) => {
     
     const MATCH_ELEMENT = /<([a-z][a-z0-9]*\b[^>]*)>(.*?)<\/\1>/g;
+    const MATCH_VARIABLE = /^\{\{(.+)\}\}$/;
     let element
-    let arr = []
+    let elements = []
     do {
       element = MATCH_ELEMENT.exec(str)
-      
-      // console.log("element", element[2])
       if(element) {
+        let variable = MATCH_VARIABLE.exec(element[2])
         let o = {}
         let tag = element[1]
-        // console.log("element: ")
-        // console.log(element)
-        o.dom_element = tag;
-        // console.log("--------------")
-        // console.log("tag: ")
-        // console.log(tag)
-        // console.log(element[2])
-        
+        o.tag = tag
+        o.dom_element = global.document.createElement(tag)      
         o.children = elementMatch(element[2])
-        arr.push(o)
+        if(variable){
+          o.variable = variable[1]
+          o.text = global.document.createTextNode("")
+          o.dom_element.appendChild(o.text)
+        }
+        elements.push(o)
       }
-      console.log("--------------------------------------------------")
-      console.log(arr[0])
-      // console.log("children:")
-      // console.log(arr[0].children)
-
-      
     } while (element)
-    return arr
+
+    return elements
   }
-  const obj = elementMatch(template)
+  
+
+  const update = (data, actual_obj) => {
+    let key = Object.keys(data)[0]
+    let obj = actual_obj
+    while(actual_obj[0]){
+      if(actual_obj[0].variable == key){
+        actual_obj[0].text.nodeValue = data[key]
+      }
+      actual_obj = actual_obj[0].children
+    }
+    return obj
+  }
   
   
 
 
   // // let variable = template.toString().match(MATCH_VARIABLE)
-  // return function createElement(x) {
-  //   console.log(x)
-  //   let element = {
-  //     title: "danilo"
-  //   }
-  //   console.log("element: ")
-  //   console.log(element)
-  //   return { element }
-  // }
-}
+  return function createElement(x) {
+    const obj = elementMatch(template)
+    const updated = update(x, obj)
+    const v = updated[0].dom_element
+    return { el: v }
+  }
 
-build("<h1><h2><small>{{title}}</small></h2></h1>")
+  
+}
+// const tpl = build("<h1><span><small>{{title}}</small></span></h1>")
+// const title = "Hello, World!";
+// const txt = "blubb blubb blubb"
+// tpl({ title })
+
