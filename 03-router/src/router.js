@@ -28,3 +28,57 @@
  * Start:
  * - page()
  */
+
+
+ export function createRouter() {
+  const routes = []
+  let route;
+  const router = function(params, fun) {
+    if(typeof(params) == 'object'){
+      const window = params.window
+      const document = window.document
+      const history = window.history
+      const currentPage = window.location.pathname
+      router.current = route
+
+      window.onpopstate = function(event) {
+        // console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
+        // console.log("pathname: " + document.location.pathname)
+        router.current = document.location.pathname
+      }
+      
+      
+      
+    
+
+      // window PopStateEvent
+      // document click
+    }
+    else {
+      route = params
+      routes.push(route)
+      fun()
+      
+      // console.log("here: " + router.current)
+      
+    }
+
+    
+    
+    // console.log(router.current)
+    router.error = Error('no route defined in your router');
+
+    
+    return router
+    
+
+
+    
+    
+    
+  }
+
+  return router
+
+  
+ }
