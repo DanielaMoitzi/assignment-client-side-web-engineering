@@ -89,7 +89,7 @@ describe("03-router", () => {
   });
 
   describe("dynamic", () => {
-    it.skip("should create and start router with dynamic route: /users/:id", () => {
+    it("should create and start router with dynamic route: /users/:id", () => {
       const { dom, window } = createWindow({
         url: `${BASE_URL}/`
       });
@@ -102,7 +102,23 @@ describe("03-router", () => {
       router.current.should.eql("/users/:userid");
     });
 
-    it.skip("should create and start router with dynamic route: /users/:id/tasks/:taskid", () => {
+    it("should create and start router with one static and one dynamic route: / and /users/:id", () => {
+      const { dom, window } = createWindow({
+        url: `${BASE_URL}/`
+      });
+
+      const router = createRouter();
+      router("/", () => {});
+      router("/users/:userid", () => {});
+      router({ window });
+
+      changeLocation(dom, `${BASE_URL}/`);
+      router.current.should.eql("/");
+      changeLocation(dom, `${BASE_URL}/users/1`);
+      router.current.should.eql("/users/:userid");
+    });
+
+    it("should create and start router with dynamic route: /users/:id/tasks/:taskid", () => {
       const { dom, window } = createWindow({
         url: `${BASE_URL}/`
       });
@@ -115,7 +131,7 @@ describe("03-router", () => {
       router.current.should.eql("/users/:userid/tasks/:taskid");
     });
 
-    it.skip("should invoke function for: /users/:userid/tasks/:taskid", done => {
+    it("should invoke function for: /users/:userid/tasks/:taskid", done => {
       const { dom, window } = createWindow({
         url: `${BASE_URL}/`
       });
@@ -127,7 +143,7 @@ describe("03-router", () => {
       changeLocation(dom, `${BASE_URL}/users/1/tasks/1`);
     });
 
-    it.skip("should check param value in context:: /users/:userid → 1", done => {
+    it("should check param value in context:: /users/:userid → 1", done => {
       const { dom, window } = createWindow({
         url: `${BASE_URL}/`
       });
@@ -144,7 +160,7 @@ describe("03-router", () => {
   });
 
   describe("catch all", () => {
-    it.skip("should catch location /home", done => {
+    it("should catch location /home", done => {
       const { dom, window } = createWindow({
         url: `${BASE_URL}/`
       });
@@ -158,7 +174,7 @@ describe("03-router", () => {
   });
 
   describe("redirect", () => {
-    it.skip("should redirect / to /home", done => {
+    it("should redirect / to /home", done => {
       const { dom, window } = createWindow({
         url: `${BASE_URL}/`
       });
@@ -172,7 +188,7 @@ describe("03-router", () => {
   });
 
   describe("links", () => {
-    it.skip("should open /home on click", () => {
+    it("should open /home on click", () => {
       const { dom, window } = createWindow({
         url: `${BASE_URL}/`
       });
@@ -186,7 +202,7 @@ describe("03-router", () => {
       router.current.should.eql("/home");
     });
 
-    it.skip("should not open /home on click", () => {
+    it("should not open /home on click", () => {
       const { dom, window } = createWindow({
         url: `${BASE_URL}/`
       });
@@ -200,7 +216,7 @@ describe("03-router", () => {
       router.current.should.eql("/");
     });
 
-    it.skip("should not open /home on click", () => {
+    it("should not open /home on click", () => {
       const { dom, window } = createWindow({
         url: `${BASE_URL}/`
       });
@@ -214,7 +230,7 @@ describe("03-router", () => {
       router.current.should.eql("/");
     });
 
-    it.skip("should not open /home on click", () => {
+    it("should not open /home on click", () => {
       const { dom, window } = createWindow({
         url: `${BASE_URL}/`
       });
@@ -228,7 +244,7 @@ describe("03-router", () => {
       router.current.should.eql("/");
     });
 
-    it.skip("should not open /home on click", () => {
+    it("should not open /home on click", () => {
       const { dom, window } = createWindow({
         url: `${BASE_URL}/`
       });
@@ -244,7 +260,7 @@ describe("03-router", () => {
   });
 
   describe("history", () => {
-    it.skip("should change history", () => {
+    it("should change history", () => {
       const { dom, window } = createWindow({
         url: `${BASE_URL}/`
       });
@@ -261,7 +277,7 @@ describe("03-router", () => {
       window.history.length.should.eql(3);
     });
 
-    it.skip("should change history and go back", () => {
+    it("should change history and go back", () => {
       const { dom, window } = createWindow({
         url: `${BASE_URL}/`
       });
