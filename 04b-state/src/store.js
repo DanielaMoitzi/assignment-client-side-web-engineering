@@ -19,27 +19,27 @@ export function createStore(reducer, state) {
   if(!(reducer instanceof Function)) {
     throw new Error("reducer must be a function")
   }
-
-
   let nextState = state
   let listeners = []
   const dispatch = (action) => {
-    console.log("***********************************", state, ", ", action.type)
     let currentState = getState()
     nextState = reducer(currentState, action)
     listeners.map(listener => {
-      listener()
+      if(listener[1] == true) listener[0]()
+      
     })
-
-    
     return nextState
   }
   const subscribe = (listener) => {
-    listeners.push(listener)
-    return function () {
-      listeners = listeners.filter(l => listener != l)
+    listeners.push([listener, true])
+    return () => {
+      let l = listeners.find(x => listener == x[0])
+      l[1] = false
+      return listeners
     }
+
   }
+
   const getState = () => { return nextState }
   return { dispatch, subscribe, getState }
 
