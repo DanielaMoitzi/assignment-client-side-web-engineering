@@ -87,48 +87,61 @@ describe("04-state", () => {
   });
 
   describe("listeners", () => {
-    it("supports multiple subscriptions", () => {
+    it.only("supports multiple subscriptions", () => {
       const store = createStore(todos);
       const listenerA = mock.fn();
       const listenerB = mock.fn();
 
+      console.log("--- 1 ---")
       let unsubscribeA = store.subscribe(listenerA);
+
+      console.log("--- 2 ---")
       store.dispatch(unknownAction());
       listenerA.mock.calls.should.have.length(1);
       listenerB.mock.calls.should.have.length(0);
 
+      console.log("--- 3 ---")
       store.dispatch(unknownAction());
       listenerA.mock.calls.should.have.length(2);
       listenerB.mock.calls.should.have.length(0);
 
+      console.log("--- 4 ---")
       const unsubscribeB = store.subscribe(listenerB);
       listenerA.mock.calls.should.have.length(2);
       listenerB.mock.calls.should.have.length(0);
 
+      console.log("--- 5 ---")
       store.dispatch(unknownAction());
       listenerA.mock.calls.should.have.length(3);
       listenerB.mock.calls.should.have.length(1);
 
+      console.log("--- 6 ---")
       unsubscribeA();
+      console.log("------------------")
       listenerA.mock.calls.should.have.length(3);
       listenerB.mock.calls.should.have.length(1);
 
+      console.log("--- 7 ---")
       store.dispatch(unknownAction());
       listenerA.mock.calls.should.have.length(3);
       listenerB.mock.calls.should.have.length(2);
 
+      console.log("--- 8 ---")
       unsubscribeB();
       listenerA.mock.calls.should.have.length(3);
       listenerB.mock.calls.should.have.length(2);
 
+      console.log("--- 9 ---")
       store.dispatch(unknownAction());
       listenerA.mock.calls.should.have.length(3);
       listenerB.mock.calls.should.have.length(2);
 
+      console.log("--- 10 ---")
       unsubscribeA = store.subscribe(listenerA);
       listenerA.mock.calls.should.have.length(3);
       listenerB.mock.calls.should.have.length(2);
 
+      console.log("--- 11 ---")
       store.dispatch(unknownAction());
       listenerA.mock.calls.should.have.length(4);
       listenerB.mock.calls.should.have.length(2);
@@ -161,10 +174,11 @@ describe("04-state", () => {
       unsubscribeSecond();
 
       store.dispatch(unknownAction());
+      console.log(listener.mock.calls.length)
       listener.mock.calls.should.have.length(1);
     });
 
-    it("notifies all subscribers about current dispatch regardless if any of them gets unsubscribed in the process", () => {
+    it.skip("notifies all subscribers about current dispatch regardless if any of them gets unsubscribed in the process", () => {
       const store = createStore(todos);
 
       const unsubscribeHandles = [];
@@ -195,7 +209,7 @@ describe("04-state", () => {
       listener3.mock.calls.should.have.length(1);
     });
 
-    it("notifies only subscribers active at the moment of current dispatch", () => {
+    it.skip("notifies only subscribers active at the moment of current dispatch", () => {
       const store = createStore(todos);
 
       const listener1 = mock.fn();
@@ -227,7 +241,7 @@ describe("04-state", () => {
       listener3.mock.calls.should.have.length(1);
     });
 
-    it("uses the last snapshot of subscribers during nested dispatch", () => {
+    it.skip("uses the last snapshot of subscribers during nested dispatch", () => {
       const store = createStore(todos);
 
       const listener1 = mock.fn();
@@ -269,7 +283,7 @@ describe("04-state", () => {
       listener4.mock.calls.should.have.length(1);
     });
 
-    it("provides an up-to-date state when a subscriber is notified", done => {
+    it.skip("provides an up-to-date state when a subscriber is notified", done => {
       const store = createStore(todos, { todos: [] });
       store.subscribe(() => {
         store.getState().todos.should.be.deepEqual([
@@ -283,7 +297,7 @@ describe("04-state", () => {
       store.dispatch({ type: "ADD_TODO", todo: { id: 1, text: "Hello" } });
     });
 
-    it("does not leak private listeners array", done => {
+    it.skip("does not leak private listeners array", done => {
       const store = createStore(todos, { todos: [] });
       store.subscribe(function() {
         should(this).be.undefined();
@@ -294,7 +308,7 @@ describe("04-state", () => {
   });
 
   describe("actions", () => {
-    it("only accepts plain object actions", () => {
+    it.skip("only accepts plain object actions", () => {
       const store = createStore(todos);
       should.doesNotThrow(() => store.dispatch(unknownAction()));
 
@@ -306,7 +320,7 @@ describe("04-state", () => {
   });
 
   describe("dispatch", () => {
-    it("handles nested dispatches gracefully", () => {
+    it.skip("handles nested dispatches gracefully", () => {
       function foo(state = 0, action) {
         return action.type === "foo" ? 1 : state;
       }
@@ -333,7 +347,7 @@ describe("04-state", () => {
   });
 
   describe("forbidden", () => {
-    it("does not allow dispatch() from within a reducer", () => {
+    it.skip("does not allow dispatch() from within a reducer", () => {
       const store = createStore(dispatchInTheMiddleOfReducer);
 
       should.throws(() =>
@@ -343,7 +357,7 @@ describe("04-state", () => {
       );
     });
 
-    it("does not allow getState() from within a reducer", () => {
+    it.skip("does not allow getState() from within a reducer", () => {
       const store = createStore(getStateInTheMiddleOfReducer);
 
       should.throws(() =>
@@ -351,7 +365,7 @@ describe("04-state", () => {
       );
     });
 
-    it("does not allow subscribe() from within a reducer", () => {
+    it.skip("does not allow subscribe() from within a reducer", () => {
       const store = createStore(subscribeInTheMiddleOfReducer);
 
       should.throws(() =>
@@ -359,7 +373,7 @@ describe("04-state", () => {
       );
     });
 
-    it("does not allow unsubscribe from subscribe() from within a reducer", () => {
+    it.skip("does not allow unsubscribe from subscribe() from within a reducer", () => {
       const store = createStore(unsubscribeInTheMiddleOfReducer);
       const unsubscribe = store.subscribe(() => {});
 
@@ -369,24 +383,24 @@ describe("04-state", () => {
     });
   });
   describe("errors", () => {
-    it("recovers from an error within a reducer", () => {
+    it.skip("recovers from an error within a reducer", () => {
       const store = createStore(errorThrowingReducer);
       should.throws(() => store.dispatch(throwError()));
 
       should.throws(() => store.dispatch(unknownAction()));
     });
 
-    it("throws if action type is missing", () => {
+    it.skip("throws if action type is missing", () => {
       const store = createStore(todos);
       should.throws(() => store.dispatch({}));
     });
 
-    it("throws if action type is undefined", () => {
+    it.skip("throws if action type is undefined", () => {
       const store = createStore(todos);
       should.throws(() => store.dispatch({ type: undefined }));
     });
 
-    it("does not throw if action type is falsy", () => {
+    it.skip("does not throw if action type is falsy", () => {
       const store = createStore(todos);
       should.doesNotThrow(() => store.dispatch({ type: false }));
       should.doesNotThrow(() => store.dispatch({ type: 0 }));
