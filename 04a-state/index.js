@@ -17,3 +17,12 @@ app.router((route) => [route('/', viewMain)]);
 // run app
 const tree = app.start();
 document.body.appendChild(tree);
+
+document.querySelector('.track_a').addEventListener("click", evt => {
+  console.log("something was clicked")
+  localStorage.setItem('name', "Daniela");
+  let dani = localStorage.getItem('name')
+  console.log(dani)
+})
+
+
