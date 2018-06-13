@@ -16,31 +16,29 @@ import { isPlainObject } from "./utils/is-plain-object";
  * 14. Throws if action type is missin or undefined and not if falsy
  */
 export function createStore(reducer, state) {
-  if(!(reducer instanceof Function)) {
-    throw new Error("reducer must be a function")
-  }
+  if(!(reducer instanceof Function)) throw new Error("reducer must be a function")
   let nextState = state
   let listeners = []
   const dispatch = (action) => {
+    if(action.type === undefined) throw "action type is undefined";
+    if(!isPlainObject(action)) throw "action needs to be a plain object"
+    let current_listeners = []
+    listeners.forEach(l => current_listeners.push(l.slice(0)))
     let currentState = getState()
     nextState = reducer(currentState, action)
-    listeners.map(listener => {
-      if(listener[1] == true) listener[0]()
-      
+    current_listeners.forEach(listener => {
+      if(listener[1] == true) {
+        listener[0].apply(undefined)
+      }
     })
-    return nextState
   }
   const subscribe = (listener) => {
     listeners.push([listener, true])
     return () => {
       let l = listeners.find(x => listener == x[0])
       l[1] = false
-      return listeners
     }
-
   }
-
   const getState = () => { return nextState }
   return { dispatch, subscribe, getState }
-
 }
